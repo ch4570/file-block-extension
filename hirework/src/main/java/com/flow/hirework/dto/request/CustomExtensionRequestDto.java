@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @ToString
 public class CustomExtensionRequestDto {
 
     @Length(max = 20)
+    @NotBlank
     private String name;
 
 

@@ -17,4 +17,14 @@ public class GlobalCatcher {
 
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResponse.toErrorResponse(errorCode));
     }
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ErrorResponse> handledServerError(Exception e) {
+        log.error("일반 서버 에러 발생");
+        System.out.println(e);
+
+
+        ErrorCode errorCode = ErrorCode.PERSONAL_INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ErrorResponse.toErrorResponse(errorCode));
+    }
 }

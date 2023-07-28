@@ -16,25 +16,31 @@
             <span>
                 <th:block th:each="extension : ${defaultExtensionList}">
                     <th:block th:if="${extension.isChecked == true}">
-                        [[${extension.name}]] <input type="checkbox" th:id="${extension.name}" checked/> &nbsp;
+                        [[${extension.name}]] <input type="checkbox"
+                                                     th:id="${extension.name}"
+                                                     onchange="changeCheckState(this)"
+                                                     checked/> &nbsp;
                     </th:block>
                     <th:block th:if="${extension.isChecked == false}">
-                         [[${extension.name}]] <input type="checkbox" th:id="${extension.name}"/> &nbsp;
+                         [[${extension.name}]] <input type="checkbox"
+                                                      th:id="${extension.name}"
+                                                      onchange="changeCheckState(this)"
+                                                /> &nbsp;
                     </th:block>
                 </th:block>
             </span>
-            <div class="bot">
+            <div class="container">
                 <div>
                     <input type="text" placeholder="확장자 입력" id="inputExtension" /> &nbsp;
-                    <button type="button" onclick="">+추가</button>
+                    <button type="button" onclick="addCustomExtension()">+추가</button>
                 </div>
                 <br/>
-                <div class="custom-box">
+                <div class="custom-container">
                     <p style="font-size: 10px">[[${count}]]/200</p>
                     <div class="custom-btn">
                         <th:block th:each="extension : ${customExtensionList}">
                             <button type="button" class="custom-bnt">
-                                [[${extension.name}]] <a onclick="">x</a>
+                                [[${extension.name}]] <a onclick="removeCustomExtension(this)" th:id="${extension.name}">x</a>
                             </button>
                         </th:block>
                     </div>
@@ -45,19 +51,68 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    function fixedCheck(name) {
-        const checkExstension = document.getElementById(name);
 
-        if (checkExstension.checked === true) {
+    function changeCheckState(checkbox) {
+        const extensionName = checkbox.getAttribute('id');
             axios({
                 method : 'patch',
-                url: 'api/extension/' + name
+                url: 'api/extension/' + extensionName
             }).then(res => {
                 location.reload();
             }).error(error => {
                console.log(error);
+            }).catch(ex => {
+                alert(ex.response.data);
             });
+    }
+
+    function validateInput(name) {
+        console.log("validateInput Activated");
+        if (name.length === 0) {
+            alert('확장자는 비어있을 수 없습니다. 확인 후 다시 시도해주시기 바랍니다.');
+            return;
         }
+
+        if (name.length > 20) {
+            alert('확장자의 최대 길이는 20자까지 허용됩니다. 확인 후 다시 시도해주시기 바랍니다.');
+        }
+    }
+
+    function addCustomExtension() {
+        console.log("addCustomExtension Activated");
+        const extensionName = document.getElementById('inputExtension').value;
+        validateInput(extensionName);
+
+        axios({
+           method : 'post',
+           url : '/api/extension',
+           data : {'name' : extensionName }
+        }).then(res => {
+            alert('커스텀 확장자 등록이 성공했습니다.');
+            location.reload();
+        }).error(error => {
+            console.log(error);
+        }).catch(ex => {
+            alert(ex.response.data);
+        });
+
+    }
+
+    function removeCustomExtension(removeTag) {
+        console.log(removeTag);
+        const extensionName = removeTag.getAttribute('id');
+
+        axios({
+            method: 'delete',
+            url : '/api/extension/' + extensionName
+        }).then(res => {
+            alert('커스텀 확장자 삭제가 성공했습니다.');
+            location.reload();
+        }).error(error => {
+            console.log(error);
+        }).catch(ex => {
+           alert(ex.response.data);
+        });
     }
 </script>
 </html>

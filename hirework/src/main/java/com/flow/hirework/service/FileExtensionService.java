@@ -53,6 +53,7 @@ public class FileExtensionService {
 
     // 디폴트 확장자의 체크 여부를 변경
     public void modifyDefaultExtension(String name) {
+        System.out.println("name = " + name);
         DefaultExtension defaultExtension = defaultExtensionRepository.findByName(name)
                 .orElseThrow(() -> new CustomException(IS_NOT_PRESENT_EXTENSION_BAD_REQUEST));
 
