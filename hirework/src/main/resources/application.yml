@@ -1,1 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:h2:~/testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  thymeleaf:
+    check-template: true
+    prefix: classpath:templates/
+    suffix: .html
+    mode: HTML
+
+  # 파일 업로드 설정
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 30MB
+      max-request-size: 30MB
+
+  h2:
+    console:
+      enabled: true # H2 콘솔 활성화 (브라우저로 접속하여 데이터베이스 쿼리 확인 가능)
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create # 애플리케이션 시작 시마다 스키마를 재생성 (테이블 삭제 후 재생성)
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+
+server:
+  port: 80
+
+logging:
+  level:
+    org.hibernate.SQL: debug
 

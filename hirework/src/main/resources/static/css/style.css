@@ -1,0 +1,36 @@
+ul {
+    display: flex;
+}
+li {
+    list-style: none;
+}
+
+.bot{
+    margin-top: 20px;
+}
+
+.custom-box {
+    width: 250px;
+    height: 250px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 0px 10px 10px;
+}
+
+.custom-bnt{
+    border: 1px solid gray;
+    border-radius: 3px;
+    background-color: aliceblue;
+}
+
+.inline-container {
+    display: inline-block;
+}
+
+.custom-bnt:hover {
+    background-color: cadetblue;
+}
+
+.custom-bnt>a:hover {
+    cursor: pointer;
+}

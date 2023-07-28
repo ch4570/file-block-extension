@@ -5,6 +5,7 @@ import com.flow.hirework.exception.CustomException;
 import com.flow.hirework.exception.ErrorCode;
 import com.flow.hirework.repository.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class FileUploadService {
 
     private final UploadFileRepository uploadFileRepository;
@@ -30,9 +32,7 @@ public class FileUploadService {
         if (!isAllowedExtension) throw new CustomException(ErrorCode.IS_NOT_ALLOWED_EXTENSION);
 
         // 파일을 업로드할 경로를 생성 -> 상대경로를 이용
-        String uploadPath = request.getSession()
-                .getServletContext().getRealPath("/") +
-                "resources/files";
+        String uploadPath = System.getProperty("user.dir").concat("/files");
 
         // 파일의 확장자를 얻어온다.
         String extension = extensionService.getExtension(multipartFile);
@@ -45,6 +45,7 @@ public class FileUploadService {
             File uploadFile = new File(uploadPath, fileName);
             multipartFile.transferTo(uploadFile);
         } catch (IOException e) {
+            log.error("error = {}", e);
             // IOException은 Checked Exception 이므로 IOException 대신 커스텀 예외를 던져준다.
             throw new CustomException(ErrorCode.FILE_SAVE_ERROR_INTERNAL_SERVER_ERROR);
         }

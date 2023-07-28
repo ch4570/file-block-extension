@@ -1,9 +1,6 @@
 package com.flow.hirework.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,5 +22,9 @@ public class DefaultExtension extends BaseEntity {
 
     public boolean isChecked() {
         return isChecked;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -18,4 +18,8 @@ public class CustomExtension extends BaseEntity {
     private Long id;
 
     private String name;
+
+    public String getName() {
+        return name;
+    }
 }

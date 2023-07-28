@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>파일 확장자 차단</h1>
+    <hr/>
+    <ul>
+        <li style="margin-right: 20px;">
+            <div><b>고정 확장자</b></div>
+        </li>
+        <li>
+            <span>
+                <th:block th:each="extension : ${defaultExtensionList}">
+                    <th:block th:if="${extension.isChecked == true}">
+                        [[${extension.name}]] <input type="checkbox" th:id="${extension.name}" checked/> &nbsp;
+                    </th:block>
+                    <th:block th:if="${extension.isChecked == false}">
+                         [[${extension.name}]] <input type="checkbox" th:id="${extension.name}"/> &nbsp;
+                    </th:block>
+                </th:block>
+            </span>
+            <div class="bot">
+                <div>
+                    <input type="text" placeholder="확장자 입력" id="inputExtension" /> &nbsp;
+                    <button type="button" onclick="">+추가</button>
+                </div>
+                <br/>
+                <div class="custom-box">
+                    <p style="font-size: 10px">[[${count}]]/200</p>
+                    <div class="custom-btn">
+                        <th:block th:each="extension : ${customExtensionList}">
+                            <button type="button" class="custom-bnt">
+                                [[${extension.name}]] <a onclick="">x</a>
+                            </button>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function fixedCheck(name) {
+        const checkExstension = document.getElementById(name);
+
+        if (checkExstension.checked === true) {
+            axios({
+                method : 'patch',
+                url: 'api/extension/' + name
+            }).then(res => {
+                location.reload();
+            }).error(error => {
+               console.log(error);
+            });
+        }
+    }
+</script>
+</html>

@@ -2,7 +2,9 @@ package com.flow.hirework.service;
 
 import com.flow.hirework.domain.CustomExtension;
 import com.flow.hirework.domain.DefaultExtension;
-import com.flow.hirework.dto.CustomExtensionDto;
+import com.flow.hirework.dto.request.CustomExtensionRequestDto;
+import com.flow.hirework.dto.response.CustomExtensionResponseDto;
+import com.flow.hirework.dto.response.DefaultExtensionResponseDto;
 import com.flow.hirework.exception.CustomException;
 import static com.flow.hirework.exception.ErrorCode.*;
 import com.flow.hirework.repository.DefaultExtensionRepository;
@@ -11,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,7 +27,7 @@ public class FileExtensionService {
 
 
     // 새로운 커스텀 확장자를 저장
-    public void addCustomExtension(CustomExtensionDto customExtensionDto) {
+    public void addCustomExtension(CustomExtensionRequestDto customExtensionDto) {
         boolean isDuplicatedDefaultExtension = customExtensionRepository.existsByName(customExtensionDto.getName());
         boolean isDuplicatedCustomExtension = defaultExtensionRepository.existsByName(customExtensionDto.getName());
         long customExtensionCount = customExtensionRepository.count();
@@ -73,8 +78,38 @@ public class FileExtensionService {
         return !isAllowedDefaultExtension && !isAllowedCustomExtension;
     }
 
+    public List<DefaultExtensionResponseDto> findAllDefaultExtension() {
+        return defaultExtensionRepository.findAll()
+                .stream()
+                .map(DefaultExtensionResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<CustomExtensionResponseDto> findAllCustomExtension() {
+        return customExtensionRepository.findAll()
+                .stream()
+                .map(CustomExtensionResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     public String getExtension(MultipartFile multipartFile) {
         return multipartFile.getOriginalFilename()
                 .substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
+    }
+
+
+    public void setDefaultData() {
+        String[] defaultExtensionArr = new String[] {
+                "bat", "cmd", "com", "cpl", "exe", "scr", "js"
+        };
+
+        for (String name : defaultExtensionArr) {
+            DefaultExtension extension = DefaultExtension.builder()
+                    .name(name)
+                    .isChecked(false)
+                    .build();
+
+            defaultExtensionRepository.save(extension);
+        }
     }
 }
