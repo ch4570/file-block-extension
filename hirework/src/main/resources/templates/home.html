@@ -45,6 +45,10 @@
                         </th:block>
                     </div>
                 </div>
+                <div class="file-container">
+                    <input type="file" id="file"/><br>
+                    <button type="button" id="file-button" onclick="transferFile()">파일 업로드</button>
+                </div>
             </div>
         </li>
     </ul>
@@ -55,63 +59,86 @@
     function changeCheckState(checkbox) {
         const extensionName = checkbox.getAttribute('id');
             axios({
-                method : 'patch',
+                method : 'PATCH',
                 url: 'api/extension/' + extensionName
             }).then(res => {
                 location.reload();
-            }).error(error => {
-               console.log(error);
             }).catch(ex => {
-                alert(ex.response.data);
+                console.error(ex);
+                alert('status code = ' + ex.response.data.status + '\nMessage = ' + ex.response.data.message);
             });
     }
 
     function validateInput(name) {
-        console.log("validateInput Activated");
         if (name.length === 0) {
             alert('확장자는 비어있을 수 없습니다. 확인 후 다시 시도해주시기 바랍니다.');
-            return;
+            return false;
         }
 
         if (name.length > 20) {
             alert('확장자의 최대 길이는 20자까지 허용됩니다. 확인 후 다시 시도해주시기 바랍니다.');
+            return false;
         }
+
+        return true;
     }
 
     function addCustomExtension() {
-        console.log("addCustomExtension Activated");
         const extensionName = document.getElementById('inputExtension').value;
-        validateInput(extensionName);
+        const valid = validateInput(extensionName);
 
-        axios({
-           method : 'post',
-           url : '/api/extension',
-           data : {'name' : extensionName }
-        }).then(res => {
-            alert('커스텀 확장자 등록이 성공했습니다.');
-            location.reload();
-        }).error(error => {
-            console.log(error);
-        }).catch(ex => {
-            alert(ex.response.data);
-        });
+        if (valid) {
+            axios({
+                method : 'POST',
+                url : '/api/extension',
+                data : {'name' : extensionName }
+            }).then(res => {
+                alert('커스텀 확장자 등록이 성공했습니다.');
+                location.reload();
+            }).catch(ex => {
+                console.error(ex);
+                alert('status code = ' + ex.response.data.status + '\nMessage = ' + ex.response.data.message);
+            });
+        }
 
     }
 
     function removeCustomExtension(removeTag) {
-        console.log(removeTag);
         const extensionName = removeTag.getAttribute('id');
 
         axios({
-            method: 'delete',
+            method: 'DELETE',
             url : '/api/extension/' + extensionName
         }).then(res => {
             alert('커스텀 확장자 삭제가 성공했습니다.');
             location.reload();
-        }).error(error => {
-            console.log(error);
         }).catch(ex => {
-           alert(ex.response.data);
+            console.error(ex);
+            alert('status code = ' + ex.response.data.status + '\nMessage = ' + ex.response.data.message);
+        });
+    }
+
+    function transferFile() {
+        const file = document.getElementById('file').files[0];
+
+        let formData = new FormData();
+        formData.append('file', file);
+
+        console.log(formData);
+
+        axios({
+            method: 'POST',
+            url: '/api/files',
+            headers: {
+                "Content-Type" : "multipart/form-data"
+            },
+            data: formData
+        }).then(res => {
+            alert('파일 업로드가 성공했습니다.');
+            location.reload();
+        }).catch(ex => {
+            console.error(ex);
+            alert('status code = ' + ex.response.data.status + '\nMessage = ' + ex.response.data.message);
         });
     }
 </script>

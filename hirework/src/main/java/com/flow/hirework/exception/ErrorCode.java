@@ -17,7 +17,7 @@ public enum ErrorCode {
     IS_NOT_PRESENT_EXTENSION_BAD_REQUEST(BAD_REQUEST, "존재하지 않는 확장자 입니다. 확인 후 다시 시도해주시기 바랍니다."),
 
     /* 중복된 무언가가 존재 - 409 CONFLICT */
-    IS_DUPLICATE_BAD_REQUEST(BAD_REQUEST, "등록하려는 확장자는 커스텀 확장자 또는 기본 확장자에 이미 저장되어 있습니다. 확인 후 다시 시도해주시기 바랍니다."),
+    IS_DUPLICATE_BAD_REQUEST(CONFLICT, "등록하려는 확장자는 커스텀 확장자 또는 기본 확장자에 이미 저장되어 있습니다. 확인 후 다시 시도해주시기 바랍니다."),
 
     /* 서버 에러 발생 - 500 Internal Server Error */
     FILE_SAVE_ERROR_INTERNAL_SERVER_ERROR(INTERNAL_SERVER_ERROR, "파일 저장 중 에러가 발생했습니다. 확인 후 다시 시도해주시기 바랍니다."),

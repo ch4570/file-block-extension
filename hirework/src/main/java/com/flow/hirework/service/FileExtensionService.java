@@ -28,14 +28,20 @@ public class FileExtensionService {
 
     // 새로운 커스텀 확장자를 저장
     public void addCustomExtension(CustomExtensionRequestDto customExtensionDto) {
+
+        // 커스텀 확장자와 기본 확장자에 추가하려는 확장자가 있는지 조회한다.
         boolean isDuplicatedDefaultExtension = customExtensionRepository.existsByName(customExtensionDto.getName());
         boolean isDuplicatedCustomExtension = defaultExtensionRepository.existsByName(customExtensionDto.getName());
+
+        // 커스텀 확장자의 현재 개수를 센다 -> 200개 초과일경우 저장불가
         long customExtensionCount = customExtensionRepository.count();
 
+        // 커스텀 확장자와 기본 확장자 중 한 곳에라도 있는 확장자면 추가 불가
         if (isDuplicatedCustomExtension || isDuplicatedDefaultExtension) {
             throw new CustomException(IS_DUPLICATE_BAD_REQUEST);
         }
 
+        // 커스텀 확장자의 개수가 200를 초과되지 못하도록 방어
         if (customExtensionCount >= 200) {
             throw new CustomException(NOT_LEFT_SPACE_TO_SAVE_EXTENSION_BAD_REQUEST);
         }
@@ -53,7 +59,6 @@ public class FileExtensionService {
 
     // 디폴트 확장자의 체크 여부를 변경
     public void modifyDefaultExtension(String name) {
-        System.out.println("name = " + name);
         DefaultExtension defaultExtension = defaultExtensionRepository.findByName(name)
                 .orElseThrow(() -> new CustomException(IS_NOT_PRESENT_EXTENSION_BAD_REQUEST));
 
@@ -72,13 +77,14 @@ public class FileExtensionService {
     public boolean isAllowedExtension(MultipartFile multipartFile) {
         String extension = getExtension(multipartFile);
 
-        // 커스텀 확장자와 기본 확장자에 존재하지 않아야 등록이 가능한 파일확장자이다.
-        boolean isAllowedDefaultExtension = defaultExtensionRepository.existsByName(extension);
+        // 커스텀 확장자에 존재하지 않고, 기본 확장자는 체크 상태일 경우 업로드가 불가능하다.
+        boolean isAllowedDefaultExtension = defaultExtensionRepository.existsByNameAndIsChecked(extension, true);
         boolean isAllowedCustomExtension = customExtensionRepository.existsByName(extension);
 
         return !isAllowedDefaultExtension && !isAllowedCustomExtension;
     }
 
+    // 기본 확장자 리스트를 가져오는 메서드
     public List<DefaultExtensionResponseDto> findAllDefaultExtension() {
         return defaultExtensionRepository.findAll()
                 .stream()
@@ -86,6 +92,7 @@ public class FileExtensionService {
                 .collect(Collectors.toList());
     }
 
+    // 커스텀 확장자를 가져오는 메서드
     public List<CustomExtensionResponseDto> findAllCustomExtension() {
         return customExtensionRepository.findAll()
                 .stream()
@@ -93,12 +100,14 @@ public class FileExtensionService {
                 .collect(Collectors.toList());
     }
 
+    // 파일의 확장자만 뽑아오는 메서드
     public String getExtension(MultipartFile multipartFile) {
         return multipartFile.getOriginalFilename()
                 .substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
     }
 
 
+    // 기본 확장자 7개의 데이터를 저장하는 메서드 -> 서버가 시작할때 등록
     public void setDefaultData() {
         String[] defaultExtensionArr = new String[] {
                 "bat", "cmd", "com", "cpl", "exe", "scr", "js"

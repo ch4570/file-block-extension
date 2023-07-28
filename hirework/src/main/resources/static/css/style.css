@@ -17,10 +17,25 @@ li {
     padding: 0px 10px 10px;
 }
 
+.file-container {
+    margin-top: 30px;
+    width: 250px;
+    height: 50px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 0px 10px 10px;
+}
+
 .custom-button{
     border: 1px solid gray;
     border-radius: 3px;
     background-color: aliceblue;
+}
+
+#file-button {
+    border: 1px solid gray;
+    border-radius: 3px;
+    margin-top: 10px;
 }
 
 .inline-container {

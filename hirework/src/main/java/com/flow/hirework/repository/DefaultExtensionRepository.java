@@ -21,5 +21,7 @@ public interface DefaultExtensionRepository extends JpaRepository<DefaultExtensi
     // 커스텀 확장자에서 이미 있는 디폴트 확장자를 추가 하지 않도록 검증할때 사용
     boolean existsByName(String name);
 
+    boolean existsByNameAndIsChecked(String name, boolean isChecked);
+
     Optional<DefaultExtension> findByName(String name);
 }

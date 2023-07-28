@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +18,9 @@ public class FileUploadController {
     private final FileUploadService uploadService;
 
     @PostMapping("/api/files")
-    public ResponseEntity<HttpStatus> uploadFile(MultipartFile multipartFile, HttpServletRequest request) {
-        uploadService.uploadFile(multipartFile, request);
+    public ResponseEntity<HttpStatus> uploadFile(MultipartFile file, HttpServletRequest request) {
+        System.out.println("file = " + file);
+        uploadService.uploadFile(file, request);
         return ResponseEntity.ok().build();
     }
 }
